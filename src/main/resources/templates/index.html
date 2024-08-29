@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empty</title>
+    <link rel="icon" type="image/png" href="/favicon.jpg" />
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/common.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card-title {
+            font-size: 1.25rem;
+        }
+        .card-text {
+            font-size: 0.875rem;
+        }
+        .timer {
+            font-size: 0.75rem;
+            color: red;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #0046C0;
+        }
+        .navbar-nav .nav-link {
+            color: #333;
+            font-weight: 500;
+            margin-right: 20px;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #000;
+        }
+        .navbar-nav .nav-link:last-child {
+            margin-right: 0;
+        }
+        .navbar-text {
+            color: #333;
+            margin-right: 20px;
+        }
+        .dropdown-menu {
+            min-width: auto;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #333;
+        }
+        .card-text {
+            font-size: 0.875rem;
+            color: #555;
+        }
+        .card-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #222;
+        }
+        .card-monthly-payment {
+            font-size: 0.875rem;
+            color: #555;
+        }
+        .card-details {
+            font-size: 0.875rem;
+            color: #28a745;
+        }
+        .card-timer {
+            font-size: 1.2rem;
+            color: green;
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 0;
+            font-weight: bold;
+        }
+        .card-timer-text {
+            text-align: center;
+        }
+        .card-block{
+            display: flex;
+        }
+        .card-text-ml{
+            width: 50%;
+        }
+        .card-text-price{
+            width: 50%;
+        }
+        .card-text-ml, .card-text-pw{
+            display: block;
+            width: 100%;
+            text-align: left;
+        }
+        .card-price, .card-monthly-payment {
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+        .card-monthly-payment {
+            color: #6610f2;
+        }
+        .get-knowledge {
+            font-weight: bold;
+            color: black;
+        }
+        .chips {
+            background-color: #d5e6f5 !important;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container mt-2 mb-2">
+        <a class="navbar-brand" href="#">Brand</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Найти автомобиль</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">О кредитовании</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Выездная инспекция</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">О нас</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Войти / Зарегистрироваться</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="mb-3">
+                <select class="form-select" id="brands">
+                    <option selected>Все марки</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <select class="form-select" id="models">
+                    <option selected>Все модели</option>
+                </select>
+            </div>
+            <button class="btn btn-primary w-100 mb-3">Обновить поиск</button>
+            <div class="accordion" id="filters">
+                <!-- Add other filters similarly -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingPrice">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrice" aria-expanded="false" aria-controls="collapsePrice">
+                            Цена или ежемесячный платеж
+                        </button>
+                    </h2>
+                    <div id="collapsePrice" class="accordion-collapse collapse" aria-labelledby="headingPrice" data-bs-parent="#filters" style="">
+                        <div class="accordion-body">
+                            от $1500 до $20000
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingDistance">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDistance" aria-expanded="false" aria-controls="collapsePrice">
+                            Пробег
+                        </button>
+                    </h2>
+                    <div id="collapseDistance" class="accordion-collapse collapse" aria-labelledby="headingDistance" data-bs-parent="#filters" style="">
+                        <div class="accordion-body">
+                            от 50000 миль
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingYear">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseYear" aria-expanded="false" aria-controls="collapsePrice">
+                            Год выпуска
+                        </button>
+                    </h2>
+                    <div id="collapseYear" class="accordion-collapse collapse" aria-labelledby="headingYear" data-bs-parent="#filters" style="">
+                        <div class="accordion-body">
+                            от 2015
+                        </div>
+                    </div>
+                </div>
+                <!-- Add other filters similarly -->
+            </div>
+        </div>
+        <div class="col-md-9">
+            <h3>Подбор авто по параметрам</h3>
+
+            <div class="row align-items-center mb-4 mt-3">
+                <div class="col-md-4 text-left">
+                    <span class="navbar-text">1,250 результатов</span>
+                </div>
+                <div class="col-md-4">
+                    <span class="navbar-text">Rancho Cordova, CA</span>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle" type="button" id="sortMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            Популярные
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortMenuButton">
+                            <li><a class="dropdown-item" href="#">По цене</a></li>
+                            <li><a class="dropdown-item" href="#">По пробегу</a></li>
+                            <li><a class="dropdown-item" href="#">По дате добавления</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <img src="/images/car-1.jpg" class="card-img-top" alt="Tesla Model Y">
+                        <div class="card-body">
+                            <h5 class="card-title">Toyota Camry Hibrid, 2021</h5>
+                            <div class="card-block">
+                                <div class="card-text-ml">
+                                    <div class="card-text-ml">65,869 miles</div>
+                                    <div class="card-text-pw">450hp, 98mph</div>
+                                </div>
+                                <div class="card-text-price">
+                                    <div class="card-price">$16,775</div>
+                                    <div class="card-monthly-payment">$430/месяц</div>
+                                </div>
+                            </div>
+                            <hr>
+                            <span class="chips badge rounded-pill bg-info text-dark card-details">Белый салон</span>
+                            <span class="chips badge rounded-pill bg-info text-dark card-details">19' диски</span>
+                            <p class="card-timer">48:23:59</p>
+                            <p class="card-timer-text">До конца аукциона</p>
+                            <a href="#" class="get-knowledge btn btn-outline-secondary w-100 mb-3">Узнать подробнее</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <img src="/images/car-2.jpg" class="card-img-top" alt="Tesla Model Y">
+                        <div class="card-body">
+                            <h5 class="card-title">Toyota Hibrid Plug-in, 2021</h5>
+                            <div class="card-block">
+                                <div class="card-text-ml">
+                                    <div class="card-text-ml">65,869 miles</div>
+                                    <div class="card-text-pw">450hp, 98mph</div>
+                                </div>
+                                <div class="card-text-price">
+                                    <div class="card-price">$23,775</div>
+                                    <div class="card-monthly-payment">$430/месяц</div>
+                                </div>
+                            </div>
+                            <hr>
+                            <span class="chips badge rounded-pill bg-info text-dark card-details">Белый салон</span>
+                            <span class="chips badge rounded-pill bg-info text-dark card-details">19' диски</span>
+                            <p class="card-timer">48:23:59</p>
+                            <p class="card-timer-text">До конца аукциона</p>
+                            <a href="#" class="get-knowledge btn btn-outline-secondary w-100 mb-3">Узнать подробнее</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <img src="/images/car-3.jpg" class="card-img-top" alt="Tesla Model Y">
+                        <div class="card-body">
+                            <h5 class="card-title">Ford F-150, 2022</h5>
+                            <div class="card-block">
+                                <div class="card-text-ml">
+                                    <div class="card-text-ml">65,869 miles</div>
+                                    <div class="card-text-pw">450hp, 98mph</div>
+                                </div>
+                                <div class="card-text-price">
+                                    <div class="card-price">$24,970</div>
+                                    <div class="card-monthly-payment">$430/месяц</div>
+                                </div>
+                            </div>
+                            <hr>
+                            <span class="chips badge rounded-pill bg-info text-dark card-details">Белый салон</span>
+                            <span class="chips badge rounded-pill bg-info text-dark card-details">19' диски</span>
+                            <p class="card-timer">48:23:59</p>
+                            <p class="card-timer-text">До конца аукциона</p>
+                            <a href="#" class="get-knowledge btn btn-outline-secondary w-100 mb-3">Узнать подробнее</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Repeat for other cars -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/jquery-3.7.1.min.js"></script>
+<script src="/js/bootstrap.bundle.js"></script>
+<script src="/js/common.js"></script>
+</body>
+</html>

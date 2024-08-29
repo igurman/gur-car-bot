@@ -1,0 +1,103 @@
+server:
+  port: 5000
+
+application:
+  telegram:
+    bot:
+      enabled: true
+      name: bot_name
+      token: 000000000:000000000000000000000-token
+      filter:
+        make-size: 20 # по сколько марок выводить на 1 странице в фильтре
+        model-size: 20 # по сколько моделей выводить на 1 странице в фильтре
+        search-size: 3 # кол-во сколько выводить найденных позиций
+    group:
+      group-id: -10000000000 #id группы в TG
+      theme: # id подгрупп для постинга
+        all-id: 2
+        japan-id: 3
+        america-id: 7
+        premium-id: 5
+        hybrids-id: 9
+        germany-id: 11
+        electric-id: 13
+        before-6-id: 15
+      seed-table:
+        days-before: 20 # кол-во дней перед сегодня, для поиска записей для переноса их в таблицу постов
+        count-vehicles: 500 # кол-во строк (авто) в выборке, для переноса их в таблицу постов (нужно брать все сразу, перенесенные не помечаются)
+        delete-after-days: 1 # через сколько дней после даты продажи можно удалять
+      sent-post:
+        count-posts: 50 # кол-во строк (постов) для отправки в группу за 1 раз
+      delete-post:
+        count-posts: 50 # кол-во строк (постов) для удаления из группы за 1 раз
+  parser:
+    auctionspark:
+      login: 'login@login.com'
+      password: 'password'
+      login-url: https://www.spark.com/components/login/attempt
+      search-url: https://www.spark.com/searches/new
+      graphql-url: https://www.spark.com/graphql
+      seed:
+        enabled: false # вкл/откл
+        delay: 360 # мин. через сколько секунд запускать поиск и загрузку позиций с сайта
+        day-future: 5  # дней от сегодня до Х для загрузки с сайта
+      details:
+        enabled: false # вкл/откл
+        delay: 30 # мин. через сколько секунд запускать загрузку детализаций
+        count-details: 50 # записей для получения детализаций за цикл
+        url: https://www.spark.com/components/vehicle/vdp_api_details/northbayaa/
+      calculation:
+        enabled: true # вкл/откл
+        delay: 1 # мин. через сколько секунд запускать расчёт загруженных детализаций
+        count-calc: 600 # записей для расчёта за цикл
+
+
+    auction-win:
+      enabled: false
+      login: 'login@login.com'
+      password: 'password'
+  publisher:
+    seed:
+      enabled: true # вкл/откл
+      delay: 1 # мин. запуск формирователя таблицы для постов
+    post:
+      enabled: true # вкл/откл
+      delay: 1 # мин. запуск отправки постов
+    delete:
+      enabled: true # вкл/откл
+      delay: 20 # мин. запуск удаления постов
+  app:
+    api:
+      key: "X-API-Key-test"
+    files-path: "C:\\Java\\JavaProject\\other\\gur-car-bot\\images\\"
+
+springdoc:
+  api-docs:
+    enabled: true
+
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/gur_car_bot
+    username: postgres
+    password: 123
+  jpa:
+    properties:
+      hibernate:
+        ddl-auto: validate
+        order_by:
+          default_null_ordering: last
+    open-in-view: false
+    show-sql: false
+  flyway:
+    baseline-on-migrate: true
+    schemas: public
+    placeholders:
+      db_schema: public
+    enabled: true
+    locations: classpath:db/migration
+
+logging:
+  level:
+    root: info
+    com.igurman.gur_car_bot: debug

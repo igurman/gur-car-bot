@@ -1,0 +1,44 @@
+{
+  "operationName": "searchableVehicles",
+  "variables": {
+    "page": 1,
+    "perPage": 50,
+    "sortBy": [
+      {
+        "column": "DISTANCE",
+        "direction": "ASC"
+      },
+      {
+        "column": "MAKE",
+        "direction": "ASC"
+      },
+      {
+        "column": "MODEL",
+        "direction": "ASC"
+      },
+      {
+        "column": "YEAR",
+        "direction": "DESC"
+      },
+      {
+        "column": "ODOMETER",
+        "direction": "ASC"
+      },
+      {
+        "column": "SALE_DATE",
+        "direction": "ASC"
+      }
+    ],
+    "filterParams": {
+      "auctions": [
+        "13072"
+      ],
+      "saleDateRange": {
+        "startDate": "2024-06-27",
+        "endDate": "2024-06-28"
+      },
+      "vehicleTypes": null
+    }
+  },
+  "query": "query searchableVehicles($page: Int, $perPage: Int, $sortBy: [SearchableVehiclesSortInput!], $filterParams: SearchableVehiclesCriteria) {\n  searchableVehicles(\n    page: $page\n    perPage: $perPage\n    sortBy: $sortBy\n    filterParams: $filterParams\n  ) {\n    totalCount\n    vehicles {\n      description\n      hasConditionReport\n      spinPictureCount\n      grade\n      vin\n      exteriorColor\n      mileage\n      mmrValue\n      pmrAverage\n      lights\n      isSold\n      runNumber\n      saleDate\n      auctionShortName\n      city\n      state\n      stockNumber\n      sellerStockNumber\n      checkedInAt\n      buyNowPrice\n      year\n      make\n      model\n      style\n      catalystConsignorName\n      sellerName\n      floorPrice\n      vehicleId\n      canShowAutoCheck\n      canShowCarfaxConnect\n      canShowScanVin\n      isWatched\n      watchList {\n        targetPrice\n        notes\n        __typename\n      }\n      company {\n        id\n        codeName\n        __typename\n      }\n      isSeller\n      buyNowEndAt\n      makeOfferEndAt\n      thumbnailUrl\n      titleStatus\n      edgeSlug\n      distance\n      hasConditionReport\n      eblockListing {\n        eblockId\n        __typename\n      }\n      proxyBidEndsAt\n      proxyBid {\n        amount\n        __typename\n      }\n      simulcastListing {\n        routeName\n        __typename\n      }\n      announcements\n      certifications\n      carproofUrl\n      __typename\n    }\n    __typename\n  }\n}\n"
+}

@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: gur-car-bot
+  profiles:
+    active: local
+    group:
+      local: local
+      prod: prod
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+
+
