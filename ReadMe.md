@@ -1,71 +1,71 @@
-Сервис получения авто с различных площадок и постинга их в ТГ группу, а также поиск с фильтрацией в ТГ боте.
+A service for receiving cars from various sites and posting them to a TG group, as well as a search with filtering in the TG bot.
 
-### Предварительные настройки.
+### Presets.
 
-### Создать базу:
-1. создать базу Postgres с названием `gur_car_bot`
-2. название базы содержится в разделе: `spring.datasource.url: jdbc:postgresql://localhost:5432/gur_car_bot`
+### Create a database:
+1. create a Postgres database called `gur_car_bot`
+2. the name of the database is contained in the section: `spring.datasource.url: jdbc:postgresql://localhost:5432/gur_car_bot`
 
-### Создать бот и группу:
-1. Зайдите в телеграм канал https://t.me/BotFather
-2. В разделе меню выберите `/newbot`
-3. Следуйте инструкциям и создайте бота и группу
-4. Скопируйте token и вставьте в `application-local.yaml` в раздел: `application.telegram.bot.token = xxx`
-5. Идентификато группы должен начинаться с минуса `group-id: -00000000`
-6. В группе необходимо создать несколько подгрупп и указать их ИД в разделе # id подгрупп для постинга
+### Create a bot and a group:
+1. Go to the telegram channel https://t.me/BotFather
+2. In the menu section, select `/newbot`
+3. Follow the instructions and create a bot and group
+4. Copy the token and paste it into `application-local.yaml` in the section: `application.telegram.bot.token = xxx`
+5. The group identification must start with the minus `group-id: -00000000`
+6. In the group, you need to create several subgroups and specify their ID in the # id section of the subgroups for posting
 
-### Тестовая загрузка:
-При первой загрузке flyway загрузит в БД начальные данные, как будто парсер уже получил данные по нескольким авто, но ещё не распарсил их.\
-Таблица `vehicles` будет заполнена не полностью. Первичные данные включают в себя:
+### Test Load:
+At the first load, the flyway will load the initial data into the database, as if the parser has already received data on several cars, but has not yet parsed it.
+The `vehicles` table will not be filled in completely. Primary data include:
 `auction_id`, `vin`, `auction`, `status`, `link`, `auction_data`
-`status` будет равен `AWAIT_CALC`, т.е. ожидает расчёта
+`status` will be equal to `AWAIT_CALC`, i.e. waiting to be calculated
 
-### Работа ТГ группы:
-Через 1 минуту стартует сервис расчёта. Он возьмёт пачку авто и попытается распарсить полученный на предыдущем этапе JSON с полными данными об авто. В случае неудачи изменит статус записи.
+### Work of the TG group:
+In 1 minute, the calculation service starts. It will take a pack of cars and try to parse the JSON obtained at the previous stage with the full data about the car. If it fails, it will change the status of the record.
 
-После успешного парсинга JSON-а в таблице `vehicles` появятся найденные в JSON данные и изменится статус на `WEB`, т.е. запись готова для использования постинге в группу и на сайте. Также заполнится таблица `pictures` ссылками на изображения авто найденные в JSON. Главная картинка каждого авто имеет тип `FIRST`, все остальные `SECOND`.
+After successful JSON parsing, the data found in JSON will appear in the `vehicles` table and the status will change to `WEB`, i.e. the record is ready for use in posting to the group and on the site. The `pictures` table will also be populated with links to the car images found in the JSON. The main picture of each car is of type `FIRST`, all the rest are `SECOND`.
 
-Через промежутки времени будет запускаться сервис, который выбирает из имеющихся авто актуальные для постинга в телеграм-группу и формирует таблицу для постинга с учётом, в какую группу в какую подгруппу будет производиться постинг.\
->Почему был сделан отдельный сервис? Для распараллеливания действий. Авто (в будущем) могут отправляться не только в телеграм-группу, но и на e-mail или непосредственно в личный чат пользователю (подписавшемуся на рассылку). Для чего в таблице `posts` есть поля `user_type`, `group_channel_id`.
+At intervals, a service will be launched, which selects from the available cars relevant for posting to the telegram group and forms a table for posting, taking into account which group in which subgroup the posting will be made.
+>Why was a separate service made? To parallelize actions. Cars (in the future) can be sent not only to a telegram group, but also to e-mail or directly to a personal chat to the user (who subscribed to the mailing list). For this purpose, the `posts` table has the `user_type`, `group_channel_id` fields.
 
-Далее стартует "Постер". Он читает таблицу `posts`, забирает определенное количество постов для отправки в статусе `CREATED` и отправляет их по указанным адресам. В текущей реализации только телеграм-группа (подгруппы).\
-Отправка производится в синхронном режиме, т.к. телеграм не разрешает множественные вызовы. При количестве вызовов больше отведённого сервису телеграм блокирует загрузку и отдаёт ошибку с указанным временем до конца блокировки. Сервис постинга учитывает это и засыпает на указанное время в избежании DDOS и последующего бана.\
-После постинга записываем в таблицу `posts` идентификаторы сообщений в ТГ (обычно один пост - это несколько сообщений) для возможности в дальнейшем удалить его из ТГ. Также меняем статус записи на `POSTED`.
+Then the "Poster" starts. It reads the `posts` table, picks up a certain number of posts to send in the `CREATED` status and sends them to the specified addresses. In the current implementation, only the telegram group (subgroups).
+Sending is carried out in synchronous mode, because telegram does not allow multiple calls. If the number of calls is more than the number allotted to the service, telegram blocks the download and gives an error with the specified time until the end of the blocking. The posting service takes this into account and falls asleep for the specified time in order to avoid DDOS and subsequent ban.
+After posting, write down the message identifiers in the TG in the `posts` table (usually one post is several messages) to be able to remove it from the TG in the future. We also change the status of the record to `POSTED`.
 
-Также периодически стартует сервис удаления записей в канале ТГ. Он читает пачку записей из таблицы `posts`, сравнивает дату удаления и если она подошла, то удаляет запись из ТГ группы указывая в записи статус `DELETED`. Иногда ТГ не может удалить запись по каким либо внутренним причинам, в этом случае он отдаст ошибку и в таблицу запишется статус `DELETED_ERROR`. Такие записи считаются удалёнными, чтобы не пытаться удалять их заново и не забивать канал. (Особенность ТГ)
+The service for deleting records in the TG channel is also periodically launched. It reads a batch of records from the `posts` table, compares the deletion date and if it is suitable, it deletes the record from the TG group, indicating the `DELETED` status in the record. Sometimes the TG cannot delete a record for some internal reasons, in which case it will return an error and the `DELETED_ERROR` status will be recorded in the table. Such recordings are considered deleted so as not to try to delete them again and not to clog the channel. (Feature of TG)
 
-## Значения сервисов
+## Service values
 
 **parser:**
-- установить флаг `true`, для первичной загрузки списка найденных авто с сайта (не работает без логин/пароля):\
+- set the `True` flag to load the list of found cars from the site for the first time (it does not work without login/password):<br>
   `application.parser.auctionspark.seed.enabled = true`
-- установить флаг `true`, для запуска скачивания деталей по каждому авто с сайта (не работает без логин/пароля):\
+- set the `true` flag to start downloading parts for each car from the site (does not work without login/password):<br>
   `application.parser.auctionspark.details.enabled = true`
-- установить флаг `true`, для парсинга каждого скачанного авто и калькуляции данных (заполнение таблицы для загрузки в бот):\
+- set the `true` flag to parse each downloaded car and calculate the data (filling in the table for uploading to the bot):<br>
   `application.parser.auctionspark.calculation.enabled = true`
 
 **publisher:**
-- установить флаг `true`, для расчёта какие авто будут отправляться в бот (боты):\
+- check the `true` flag to calculate which cars will be sent to the bot (bots):<br>
   `application.publisher.seed.enabled: true`
-- установить флаг `true`, постинга авто с набором изображений в бот:\
+- set the `true` flag when posting a car with a set of images to the bot:<br>
   `application.publisher.post.enabled: true`
-- установить флаг `true`, удаления не актуальных (уже разыгранных) авто из бота:\
+- set the `true` flag to remove irrelevant (already played) cars from the bot:<br>
   `application.publisher.delete.enabled: true`
 
-## Работа ТГ бота (основы)
+## Working of the TG bot (basics)
 
-В зарегистрированном боте появляется возможность искать по различным фильтрам записи из таблицы `vehicle` в статусе `WEB`.\
-При отправке боту команды `/start` загружаются начальные данные (в зависимости от языка пользователя), выбор настроек, фильтров, данных о компании и т.д.\
-Любой пользователь может настроить фильтр поиска, который будет сохранён для него в таблице `filters`.\
-При поиске по фильтру пользователю выдаётся несколько постов с расчётом, сколько всего постов найдено и где он находится, с предложением продолжить просмотр далее. При нажатии на кнопку "продолжить просмотр", пользователю загружается очередная партия постов (пагинация).\
-Также пользователь может посмотреть информацию о компании, задать вопрос, сделать заказ понравившегося авто.\
-Если пользователь хочет задать вопрос, программа входит в режим слушания ТГ и ждёт, что пользователь напишет вопрос и отправит. Если этого не произошло, программа сбросит настройки, и при любом другом шаге (кроме отправки вопроса) сбросит режим вопроса. Если вопрос всё же задан, он будет сохранён в таблицу `messages`.\ \
-Также туда будет сохранён заказ, если пользователь нажмёт "заказ". Пользователю покажем весёлую картинку и скажем, что заказ принят, ожидайте.
+In the registered bot, it becomes possible to search for entries from the `vehicle` table in the `WEB` status by various filters.
+When you send the `/start` command to the bot, the initial data (depending on the user's language), the selection of settings, filters, company data, etc. are loaded.
+Any user can set up a search filter that will be saved for them in the `filters` table. <br>
+When searching by filter, the user is given several posts with the calculation of how many posts have been found and where it is located, with an offer to continue viewing further. When clicking on the "continue viewing" button, the user is downloaded another batch of posts (pagination). <br>
+The user can also view information about the company, ask a question, and order the car he likes. <br>
+If the user wants to ask a question, the program enters the TG listening mode and waits for the user to write a question and send it. If this does not happen, the program will reset the settings, and at any other step (except for sending a question) it will reset the question mode. If a question is asked, it will be saved to the `messages` table. <br> <br>
+Also, the order will be saved there if the user clicks "order". We will show the user a funny picture and say that the order has been accepted, wait.
 
-## Работа смартфон-приложения
+## Smartphone app operation
 
-В паре с сервисом работает приложение для Android.\
-Приложение сканирует VIN-номер, делает фото авто и присылает их по REST API `/v1/file/upload`.\
-Безопасность выполнена посредством передачи хедера `X-API-Key` из приложения в сервис. Полученные фото сохраняются на сервере. В локальной версии в папку `images`.\
-REST API можно увидеть в Swagger по адресу http://localhost:5000/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config.\
-В будущем приложение сможет отправлять на сервис данные об авто, такие как цена, пробег и т.д. по REST API `/v1/send_data`.
+The service is paired with an Android application.<br>
+The application scans the VIN number, takes photos of the car and sends them via the REST API `/v1/file/upload`.<br>
+Security is accomplished by passing the `X-API-Key` header from the application to the service. The resulting photos are saved on the server. In the local version, in the `images` folder.<br>
+The REST API can be seen in Swagger at http://localhost:5000/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config.<br>
+In the future, the application will be able to send car data such as price, mileage, etc. to the service via the `/v1/send_data` REST API.
